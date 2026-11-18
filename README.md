@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AQVERO — Handmade Leather Boots Store
 
-## Getting Started
+Next.js (App Router) + TypeScript + Tailwind CSS. Supabase, shipping APIs and the payment gateway are added in later stages.
 
-First, run the development server:
+## Run locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # set SHOW_SAMPLE_PRODUCTS=true to see sample products
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project structure
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Path | Purpose |
+|---|---|
+| `src/app/page.tsx` | Homepage |
+| `src/app/shop/page.tsx` | Catalog with filters (category, size, price, colour) and sorting |
+| `src/app/products/[slug]/page.tsx` | Product detail |
+| `src/app/size-guide/page.tsx` | US / UK / EU / CM size charts |
+| `src/app/cart/page.tsx` | Temporary cart preview (full cart in Stage 3) |
+| `src/app/api/newsletter/route.ts` | Newsletter sign-up (validation only until Stage 4) |
+| `src/lib/catalog/data.ts` | Temporary product data (moves to Supabase in Stage 4) |
+| `src/lib/catalog/repository.ts` | The only data-access layer pages use |
+| `src/lib/catalog/sizes.ts` | Size conversion charts |
+| `src/stores/cart.ts` | Cart persisted in localStorage (IDs and quantities only, never prices) |
+| `src/components/` | UI components (layout, product, shop, home) |
+| `src/app/globals.css` | Design tokens: colours, fonts, buttons |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Roadmap
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [x] Stage 1 — Architecture & design
+- [x] Stage 2 — Homepage, catalog, product detail
+- [ ] Stage 3 — Cart & checkout
+- [ ] Stage 4 — Supabase (database, auth, RLS)
+- [ ] Stage 5 — International shipping rates (DHL / FedEx / UPS)
+- [ ] Stage 6 — Payment gateway
+- [ ] Stage 7 — Admin dashboard
+- [ ] Stage 8 — Testing
+- [ ] Stage 9 — Deployment & domain
