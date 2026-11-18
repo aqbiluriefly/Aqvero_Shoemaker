@@ -47,6 +47,7 @@ const engineerBoot: Product = {
   description: [
     "The Engineer Boot is our take on a classic work silhouette: an 8-inch shaft, a buckled strap across the instep and a second buckle at the top for a secure, adjustable fit.",
     "Each pair is cut from pull-up cowhide — leather infused with oils and waxes, so it lightens where it flexes and develops a rich, individual patina over time.",
+    "The boot is Goodyear welted: the upper, insole and sole are stitched to a leather welt, which makes the boot sturdy, water-resistant at the seam and fully resoleable when the sole wears down.",
     "Every pair is made to order by hand in our Indonesian workshop. Production begins after your payment is confirmed.",
   ],
   leather: {
@@ -54,10 +55,12 @@ const engineerBoot: Product = {
     finish: "Pull-up (oil & wax infused)",
     origin: "Handmade in Indonesia",
   },
-  // Only confirmed facts. TODO (owner): add construction method, sole, lining and heel height.
+  // Only confirmed facts. TODO (owner): add lining and heel height.
   specs: [
+    { label: "Construction", value: "Goodyear welted (resoleable)" },
     { label: "Shaft height", value: "8 inches" },
     { label: "Leather", value: "Black pull-up cowhide" },
+    { label: "Sole", value: "Vibram or Dr. Sole rubber — your choice" },
     { label: "Closure", value: "Pull-on with adjustable buckle straps" },
     { label: "Production", value: "Made to order, 3–4 weeks" },
     { label: "Shipping weight", value: "Approx. 3 kg per pair" },
@@ -70,6 +73,16 @@ const engineerBoot: Product = {
   ],
   colors: [{ slug: "black", name: "Black", hex: "#141210" }],
   variants: madeToOrderVariants("AQ-ENG8", "black", menSizes),
+  optionGroups: [
+    {
+      slug: "sole",
+      name: "Sole",
+      values: [
+        { slug: "dr-sole", name: "Dr. Sole", description: "Durable rubber lug sole", priceDeltaCents: 0 },
+        { slug: "vibram", name: "Vibram", description: "Genuine Vibram rubber sole", priceDeltaCents: 2000 },
+      ],
+    },
+  ],
   images: [
     {
       src: "/images/products/engineer-boot-black-lifestyle.webp",
@@ -78,6 +91,8 @@ const engineerBoot: Product = {
       height: 645,
       colorSlug: "black",
       focus: "60% 88%",
+      // ⚠️ THIRD-PARTY PHOTO — development placeholder only. Replace with your own
+      // product photography before launch (see LAUNCH_CHECKLIST.md).
     },
   ],
   fulfillment: { type: "made_to_order", productionWeeksMin: 3, productionWeeksMax: 4 },
@@ -107,6 +122,7 @@ function sample(
     leather: { type: "—", finish: "—", origin: "—" },
     specs: [{ label: "Status", value: "Development sample" }],
     care: [],
+    optionGroups: [],
     variants: partial.colors.flatMap((c, i) =>
       sizes.map((us) => ({ sku: `SAMPLE-${partial.slug}-${c.slug}-${us}`, colorSlug: c.slug, sizeUs: us, stock: (us * 3 + i) % 4 })),
     ),

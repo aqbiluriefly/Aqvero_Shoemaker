@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Product } from "@/lib/catalog/types";
 import { formatUsd } from "@/lib/format";
 import { ProductImagePlaceholder } from "./ProductImagePlaceholder";
+import { fromPriceCents, hasPriceRange } from "@/lib/catalog/pricing";
 
 export function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
   const [first, second] = product.images;
@@ -46,7 +47,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
           <h3 className="font-serif text-lg leading-tight sm:text-xl">{product.name}</h3>
           <p className="mt-1 text-[12px] text-stone sm:text-[13px]">{product.subtitle}</p>
         </div>
-        <p className="shrink-0 text-sm">{formatUsd(product.priceUsdCents)}</p>
+        <p className="shrink-0 text-sm">{hasPriceRange(product) && "From "}{formatUsd(fromPriceCents(product))}</p>
       </div>
       {product.colors.length > 1 && (
         <div className="mt-3 flex gap-1.5" aria-label={`${product.colors.length} colours`}>

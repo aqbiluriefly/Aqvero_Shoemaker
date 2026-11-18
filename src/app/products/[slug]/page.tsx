@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { getCategory, getProductBySlug, getRelatedProducts } from "@/lib/catalog/repository";
-import { formatUsd } from "@/lib/format";
+import { fromPriceCents } from "@/lib/catalog/pricing";
 import { siteConfig } from "@/config/site";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductPurchasePanel } from "@/components/product/ProductPurchasePanel";
@@ -41,9 +41,12 @@ export default async function ProductPage({ params }: Params) {
         brand: { "@type": "Brand", name: siteConfig.name },
         material: `${product.leather.type}, ${product.leather.finish}`,
         offers: {
-          "@type": "Offer",
+          "@type": "AggregateOffer",
           priceCurrency: "USD",
-          price: (product.priceUsdCents / 100).toFixed(2),
+          lowPrice: (fromPriceCents(product) / 100).toFixed(2),
+          highPrice: (
+            product.optionGroups.reduce((s, g) => s + Math.max(...g.values.map((v) => v.priceDeltaCents)), product.priceUsdCents) / 100
+          ).toFixed(2),
           availability:
             product.fulfillment.type === "made_to_order" ? "https://schema.org/PreOrder" : "https://schema.org/InStock",
           url: new URL(`/products/${product.slug}`, siteConfig.url).toString(),
@@ -79,12 +82,6 @@ export default async function ProductPage({ params }: Params) {
             <p className="eyebrow text-cognac">{product.leather.origin}</p>
             <h1 className="mt-3 font-serif text-4xl leading-tight md:text-5xl">{product.name}</h1>
             <p className="mt-2 text-[15px] text-stone">{product.subtitle}</p>
-            <p className="mt-5 text-2xl">{formatUsd(product.priceUsdCents)}</p>
-            <p className="mt-1 text-[12px] text-stone">
-              Price in USD. Shipping calculated at checkout. Import duties and taxes may be charged by your country on delivery.
-            </p>
-            <p className="mt-6 text-[15px] leading-relaxed">{product.shortDescription}</p>
-
             <ProductPurchasePanel product={product} />
 
             {product.customWomenAvailable && (

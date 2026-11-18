@@ -1,6 +1,7 @@
 import "server-only";
 import { categories, getAllProductsRaw } from "./data";
 import type { Category, Product } from "./types";
+import { fromPriceCents } from "./pricing";
 
 /**
  * Catalog repository — the ONLY place pages read product data from.
@@ -47,7 +48,7 @@ export async function listProducts(filters: ProductFilters = {}): Promise<Produc
   }
 
   const range = PRICE_RANGES.find((r) => r.value === filters.price);
-  if (range) items = items.filter((p) => p.priceUsdCents >= range.min && p.priceUsdCents < range.max);
+  if (range) items = items.filter((p) => fromPriceCents(p) >= range.min && fromPriceCents(p) < range.max);
 
   const sorted = [...items];
   switch (filters.sort ?? "popular") {
@@ -55,10 +56,10 @@ export async function listProducts(filters: ProductFilters = {}): Promise<Produc
       sorted.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
       break;
     case "price-asc":
-      sorted.sort((a, b) => a.priceUsdCents - b.priceUsdCents);
+      sorted.sort((a, b) => fromPriceCents(a) - fromPriceCents(b));
       break;
     case "price-desc":
-      sorted.sort((a, b) => b.priceUsdCents - a.priceUsdCents);
+      sorted.sort((a, b) => fromPriceCents(b) - fromPriceCents(a));
       break;
     default:
       sorted.sort((a, b) => b.popularity - a.popularity);

@@ -5,7 +5,8 @@ import { Check, Ruler } from "lucide-react";
 import type { Product } from "@/lib/catalog/types";
 import { findSizeRow, formatSize, SIZE_LABEL_SYSTEMS, type SizeLabelSystem } from "@/lib/catalog/sizes";
 import { useCart } from "@/stores/cart";
-import { cn } from "@/lib/format";
+import { cn, formatUsd } from "@/lib/format";
+import { defaultOptions, unitPriceCents } from "@/lib/catalog/pricing";
 import { HowToMeasure, SizeGuideTable } from "./SizeGuideTable";
 
 export function ProductPurchasePanel({ product }: { product: Product }) {
@@ -13,6 +14,7 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
   const [sizeUs, setSizeUs] = useState<number | null>(null);
   const [labelSystem, setLabelSystem] = useState<SizeLabelSystem>("us");
   const [guideOpen, setGuideOpen] = useState(false);
+  const [options, setOptions] = useState<Record<string, string>>(() => defaultOptions(product));
   const [error, setError] = useState("");
   const [added, setAdded] = useState(false);
   const addItem = useCart((s) => s.addItem);
@@ -24,6 +26,7 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
   const selected = variantsForColor.find((v) => v.sizeUs === sizeUs) ?? null;
   const color = product.colors.find((c) => c.slug === colorSlug);
   const isMto = product.fulfillment.type === "made_to_order";
+  const price = unitPriceCents(product, options) ?? product.priceUsdCents;
 
   function stockText(): string {
     if (!selected) return "";
@@ -43,7 +46,7 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
       setError("This size is sold out.");
       return;
     }
-    addItem({ sku: selected.sku, productSlug: product.slug }, 1);
+    addItem({ sku: selected.sku, productSlug: product.slug, options }, 1);
     setAdded(true);
     window.setTimeout(() => setAdded(false), 2500);
   }
@@ -52,6 +55,49 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
 
   return (
     <div>
+      <p className="mt-5 text-2xl" aria-live="polite">{formatUsd(price)}</p>
+      <p className="mt-1 text-[12px] text-stone">
+        Price in USD. Shipping calculated at checkout. Import duties and taxes may be charged by your country on delivery.
+      </p>
+      <p className="mt-6 text-[15px] leading-relaxed">{product.shortDescription}</p>
+
+      {/* Option groups (e.g. sole) */}
+      {product.optionGroups.map((group) => (
+        <fieldset key={group.slug} className="mt-8">
+          <legend className="eyebrow">{group.name}</legend>
+          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+            {group.values.map((v) => {
+              const on = options[group.slug] === v.slug;
+              return (
+                <label
+                  key={v.slug}
+                  className={cn(
+                    "flex cursor-pointer items-start justify-between gap-3 border px-4 py-3 transition-colors",
+                    on ? "border-ink" : "border-sand hover:border-stone",
+                  )}
+                >
+                  <input
+                    type="radio"
+                    name={`option-${group.slug}`}
+                    value={v.slug}
+                    checked={on}
+                    onChange={() => setOptions((o) => ({ ...o, [group.slug]: v.slug }))}
+                    className="sr-only"
+                  />
+                  <span>
+                    <span className="block text-sm font-medium">{v.name}</span>
+                    {v.description && <span className="mt-0.5 block text-[12px] text-stone">{v.description}</span>}
+                  </span>
+                  <span className="shrink-0 text-[13px] text-stone">
+                    {v.priceDeltaCents > 0 ? `+${formatUsd(v.priceDeltaCents)}` : "Included"}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        </fieldset>
+      ))}
+
       {/* Colour */}
       <div className="mt-8">
         <p className="text-[13px]">

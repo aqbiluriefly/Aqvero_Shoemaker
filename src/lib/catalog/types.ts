@@ -42,6 +42,24 @@ export type ProductVariant = {
   stock: number | null;
 };
 
+/**
+ * Purchasable options that change the price but not the stock variant,
+ * e.g. sole type. Planned table: product_option_values (Stage 4).
+ */
+export type ProductOptionValue = {
+  slug: string;
+  name: string;
+  description?: string;
+  /** Added to the base price, in US cents. 0 for the default value. */
+  priceDeltaCents: number;
+};
+
+export type ProductOptionGroup = {
+  slug: string;
+  name: string;
+  values: ProductOptionValue[];
+};
+
 export type Fulfillment =
   | { type: "made_to_order"; productionWeeksMin: number; productionWeeksMax: number }
   | { type: "in_stock"; dispatchDays: number };
@@ -63,6 +81,7 @@ export type Product = {
   care: string[];
   colors: ProductColor[];
   variants: ProductVariant[];
+  optionGroups: ProductOptionGroup[];
   images: ProductImage[];
   fulfillment: Fulfillment;
   /** Shipping weight per pair in kilograms (used by the shipping calculator in Stage 5). */

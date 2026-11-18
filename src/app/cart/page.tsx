@@ -25,12 +25,12 @@ export default function CartPage() {
         <>
           <ul className="mt-10 divide-y divide-sand border-y border-sand">
             {lines.map((l) => (
-              <li key={l.sku} className="flex items-center justify-between py-4 text-sm">
+              <li key={l.lineId} className="flex items-center justify-between py-4 text-sm">
                 <span>
                   <Link href={`/products/${l.productSlug}`} className="underline underline-offset-4">{l.productSlug}</Link>
-                  <span className="ml-3 text-stone">{l.sku} × {l.quantity}</span>
+                  <span className="ml-3 text-stone">{l.sku}{Object.values(l.options).length ? ` · ${Object.values(l.options).join(", ")}` : ""} × {l.quantity}</span>
                 </span>
-                <button type="button" onClick={() => removeItem(l.sku)} className="text-stone underline">Remove</button>
+                <button type="button" onClick={() => removeItem(l.lineId)} className="text-stone underline">Remove</button>
               </li>
             ))}
           </ul>

@@ -6,6 +6,7 @@ import { ProductCard } from "@/components/product/ProductCard";
 import { Reveal } from "@/components/ui/Reveal";
 import { NewsletterForm } from "@/components/home/NewsletterForm";
 import { formatUsd } from "@/lib/format";
+import { fromPriceCents, hasPriceRange } from "@/lib/catalog/pricing";
 
 const CRAFT_STEPS = [
   { n: "01", title: "Pattern & cutting", text: "Each panel is marked and cut from the hide by hand, working around natural marks in the leather." },
@@ -59,7 +60,7 @@ export default async function HomePage() {
               </div>
               <div className="absolute bottom-0 left-0 bg-paper px-5 py-4 md:-left-8 md:bottom-8">
                 <p className="eyebrow text-stone">Featured</p>
-                <p className="mt-1 font-serif text-xl">{hero.name} · {formatUsd(hero.priceUsdCents)}</p>
+                <p className="mt-1 font-serif text-xl">{hero.name} · {hasPriceRange(hero) ? "from " : ""}{formatUsd(fromPriceCents(hero))}</p>
               </div>
             </Link>
           )}
