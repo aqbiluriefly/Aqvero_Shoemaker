@@ -1,6 +1,8 @@
 # Supabase database
 
-Run these files **in order** in the Supabase dashboard → **SQL Editor** → New query → paste → **Run**:
+**Easiest:** run `setup_all.sql` once (all steps below combined).
+
+Or run these files **in order** in the Supabase dashboard → **SQL Editor** → New query → paste → **Run**:
 
 1. `migrations/20261118000001_schema.sql` — tables, enums, triggers
 2. `migrations/20261118000002_security.sql` — Row Level Security, privileges, `create_order()`
