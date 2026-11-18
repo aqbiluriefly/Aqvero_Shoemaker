@@ -11,7 +11,8 @@ const ALL_CODES =
 
 /**
  * Destinations we do NOT ship to.
- * - ID: origin country (international store; domestic sales handled separately)
+ * - ID: origin country. Domestic (Indonesia) sales are planned for a later phase
+ *   (local couriers e.g. JNE/J&T, IDR payments) — see README "Later".
  * - CU, IR, KP, SY: comprehensive sanctions — express carriers do not serve them
  * - RU, BY: major express carriers have suspended service
  * TODO (owner): review this list with your courier when the account is opened.

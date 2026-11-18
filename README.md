@@ -47,3 +47,8 @@ npm run dev                  # http://localhost:3000
 - [ ] Stage 7 — Admin dashboard
 - [ ] Stage 8 — Testing
 - [ ] Stage 9 — Deployment & domain
+
+## Later (after launch)
+
+- Domestic sales in Indonesia: local couriers (e.g. JNE, J&T, SiCepat), IDR pricing and local payment methods. Indonesia is currently excluded from the international checkout (`src/lib/geo/countries.ts`).
+- Display prices in local currencies (EUR, GBP, AUD, JPY, SGD, MYR) with live exchange rates.
