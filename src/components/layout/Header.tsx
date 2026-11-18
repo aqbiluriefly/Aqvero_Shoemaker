@@ -7,6 +7,7 @@ import { Menu, Search, ShoppingBag, X } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { useCartCount } from "@/stores/cart";
 import { useHydrated } from "@/hooks";
+import { useUi } from "@/stores/ui";
 import { cn } from "@/lib/format";
 import { Logo } from "./Logo";
 
@@ -16,6 +17,7 @@ export function Header() {
   const pathname = usePathname();
   const hydrated = useHydrated();
   const count = useCartCount();
+  const openCart = useUi((s) => s.openCart);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -70,14 +72,14 @@ export function Header() {
           <Link href="/shop" aria-label="Browse the shop" className="hidden h-10 w-10 items-center justify-center md:flex">
             <Search size={19} strokeWidth={1.5} />
           </Link>
-          <Link href="/cart" aria-label={`Cart, ${hydrated ? count : 0} items`} className="relative flex h-10 w-10 items-center justify-center">
+          <button type="button" onClick={openCart} aria-label={`Open cart, ${hydrated ? count : 0} items`} className="relative flex h-10 w-10 items-center justify-center">
             <ShoppingBag size={20} strokeWidth={1.5} />
             {hydrated && count > 0 && (
               <span className="absolute top-1 right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-ink px-1 text-[10px] text-paper">
                 {count}
               </span>
             )}
-          </Link>
+          </button>
         </div>
       </div>
 

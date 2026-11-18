@@ -4,7 +4,9 @@ import { useMemo, useState } from "react";
 import { Check, Ruler } from "lucide-react";
 import type { Product } from "@/lib/catalog/types";
 import { findSizeRow, formatSize, SIZE_LABEL_SYSTEMS, type SizeLabelSystem } from "@/lib/catalog/sizes";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/stores/cart";
+import { useUi } from "@/stores/ui";
 import { cn, formatUsd } from "@/lib/format";
 import { defaultOptions, unitPriceCents } from "@/lib/catalog/pricing";
 import { HowToMeasure, SizeGuideTable } from "./SizeGuideTable";
@@ -18,6 +20,8 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
   const [error, setError] = useState("");
   const [added, setAdded] = useState(false);
   const addItem = useCart((s) => s.addItem);
+  const openCart = useUi((s) => s.openCart);
+  const router = useRouter();
 
   const variantsForColor = useMemo(
     () => product.variants.filter((v) => v.colorSlug === colorSlug).sort((a, b) => a.sizeUs - b.sizeUs),
@@ -36,19 +40,29 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
     return "In stock";
   }
 
-  function handleAdd() {
+  function addSelected(): boolean {
     setError("");
     if (!selected) {
       setError("Please select a size.");
-      return;
+      return false;
     }
     if (selected.stock === 0) {
       setError("This size is sold out.");
-      return;
+      return false;
     }
     addItem({ sku: selected.sku, productSlug: product.slug, options }, 1);
+    return true;
+  }
+
+  function handleAdd() {
+    if (!addSelected()) return;
     setAdded(true);
     window.setTimeout(() => setAdded(false), 2500);
+    openCart();
+  }
+
+  function handleBuyNow() {
+    if (addSelected()) router.push("/checkout");
   }
 
   const selectedRow = sizeUs ? findSizeRow(product.sizeSystem, sizeUs) : undefined;
@@ -212,8 +226,7 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
         <button type="button" onClick={handleAdd} disabled={product.isSample} className="btn btn-primary">
           {added ? (<><Check size={16} /> Added to cart</>) : "Add to cart"}
         </button>
-        {/* Buy Now goes straight to checkout — enabled in Stage 3 when checkout exists. */}
-        <button type="button" disabled className="btn btn-outline" title="Checkout is built in Stage 3">
+        <button type="button" onClick={handleBuyNow} disabled={product.isSample} className="btn btn-outline">
           Buy now
         </button>
       </div>
